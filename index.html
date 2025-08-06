@@ -13,25 +13,33 @@
   </div>
 
   <script>
-    async function loadNews() {
-      const res = await fetch('./public/news.json'); // Auto-updated JSON
-      const data = await res.json();
+   
+  async function loadNews() {
+    try {
+      const response = await fetch('news.json');
+      if (!response.ok) throw new Error('Fetch failed: ' + response.status);
+      const data = await response.json();
+      console.log('Loaded news:', data);
 
-      const container = document.getElementById('newsContainer');
-      data.articles.forEach(article => {
-        const card = document.createElement('div');
-        card.className = 'bg-white p-4 rounded shadow-md hover:shadow-xl transition';
-        card.innerHTML = `
-          <img src="${article.image}" class="w-full h-48 object-cover rounded" />
-          <h2 class="text-lg font-semibold mt-3">${article.title}</h2>
-          <p class="text-gray-600 text-sm mt-2">${article.description || ''}</p>
-          <a href="${article.url}" target="_blank" class="text-blue-500 mt-2 inline-block">Read More →</a>
+      const container = document.getElementById('news');
+      data.forEach(item => {
+        container.innerHTML += `
+          <div class="news-card">
+            <h2>${item.title}</h2>
+            <img src="${item.image}" alt="">
+            <p>${item.description}</p>
+            <a href="${item.url}" target="_blank">Read more</a>
+          </div>
         `;
-        container.appendChild(card);
       });
+    } catch (err) {
+      console.error('Error loading news:', err);
     }
+  }
 
-    loadNews();
-  </script>
+  loadNews();
+</script>
+
+ 
 </body>
 </html>
